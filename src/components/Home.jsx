@@ -127,7 +127,7 @@ export default function Home() {
           }}
           page={page}
           onChange={handlePageChange}
-          count={1000}
+          count={500}
           size={isLarge ? "large" : "medium"}
           variant="outlined"
           color="primary"
