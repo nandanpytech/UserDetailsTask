@@ -38,6 +38,7 @@ export default function Filters({ setFiltersOpen }) {
     const formData = new FormData(event.target);
     const selectedfilter=Object.fromEntries(formData.entries())
     dispatch(addFilters({selectedfilter}))
+    setFiltersOpen(false)
 
   };
 
