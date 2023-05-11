@@ -4,18 +4,4 @@
     box-sizing: border-box;
   }
   
-  .css-3oep3w .css-1oj2twp-MuiPagination-root {
-    display: flex;
-    justify-content: center;
-  }
-  .css-nhb8h9  .css-wjh20t-MuiPagination-ul{
-    padding: .5rem !important;
-    gap: 2rem;
-    background-color: #e5e5e5;
-  }
   
-  @media only screen and (max-width: 728px) {
-    .css-nhb8h9 .css-wjh20t-MuiPagination-ul{
-      gap: 0rem;
-    }
-  }
