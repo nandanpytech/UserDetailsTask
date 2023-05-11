@@ -47,11 +47,11 @@ export default function SearchFilter({ handleSerchInput, searchUser }) {
     {
         isLarge?
         <Drawer anchor="right" open={filtersOpen} onClose={()=>setFiltersOpen(!filtersOpen)} >
-            <Filters/>
+            <Filters setFiltersOpen={setFiltersOpen}/>
         </Drawer>
         :
         <SwipeableDrawer anchor="bottom" open={filtersOpen} onClose={()=>setFiltersOpen(!filtersOpen)}>
-            <Filters/>
+            <Filters setFiltersOpen={setFiltersOpen}/>
         </SwipeableDrawer>
     }
     </>

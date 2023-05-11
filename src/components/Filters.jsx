@@ -1,17 +1,19 @@
-import { Box, Divider, Stack, Typography, Fab, styled } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Stack,
+  Typography,
+  Fab,
+  styled,
+  Checkbox,
+  Button,
+} from "@mui/material";
 import React, { useState } from "react";
 import useIsLargeView from "../utils/useIsLarge";
 import { profileData } from "../utils/userData";
+import CloseIcon from "@mui/icons-material/Close";
 
-// use a Set to store the unique values of the "gender" field
-const uniqueGenders = new Set(profileData.map((d) => d.gender));
-const uniqueGendersArr = Array.from(uniqueGenders);
-
-// use a Set to store the unique values of the "domain" field
-const uniqueDomains = new Set(profileData.map((d) => d.domain));
-const uniqueDomainsArr = Array.from(uniqueDomains);
-
-export default function Filters() {
+export default function Filters({ setFiltersOpen }) {
   const [fitersValue, setFiltersValue] = useState({
     gender: [],
     domain: [],
@@ -24,6 +26,13 @@ export default function Filters() {
     outline: 1px solid;
     height: 28px;
   `;
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    console.log(Object.fromEntries(formData.entries()));
+  };
+
   const isLarge = useIsLargeView();
   return (
     <>
@@ -33,93 +42,129 @@ export default function Filters() {
           width: isLarge ? "450px" : "100%",
         }}
       >
-        <Box mb={4}>
+        <Box mb={1} display="flex" justifyContent="space-between">
           <Typography variant="subtitle1" fontWeight={700}>
             Filters BY:{" "}
           </Typography>
-          <Divider />
+          <CloseIcon
+            onClick={() => setFiltersOpen(false)}
+            sx={{ cursor: "pointer" }}
+          />
         </Box>
+        <Divider sx={{ marginBottom: "16px" }} />
 
-        {/* It shows the gender filters?  */}
-        <Stack display="flex" spacing={1} mb={4}>
-          <Typography variant="subtitle2" fontWeight={700}>
-            Gender
-          </Typography>
-          <Box
-            style={{
-              display: "flex",
-              gap: ".5rem",
-              width: "100%",
-              flexWrap: "wrap",
-            }}
-          >
-            {uniqueGendersArr?.map((item) => {
-              return (
-                <FilterBtn
-                  onClick={() => setFiltersOpen(!filtersOpen)}
-                  variant="extended"
-                >
-                  {item}
-                </FilterBtn>
-              );
-            })}
-          </Box>
-        </Stack>
-
-        {/* It shows the Availability filters?  */}
-        <Stack display="flex" spacing={1} mb={4}>
-          <Typography variant="subtitle2" fontWeight={700}>
-            Availability
-          </Typography>
-          <Box
-            style={{
-              display: "flex",
-              gap: ".5rem",
-              width: "100%",
-              flexWrap: "wrap",
-            }}
-          >
-            <FilterBtn
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              variant="extended"
+        <form onSubmit={handleSubmit}>
+          {/* It shows the gender filters?  */}
+          <Stack display="flex" spacing={1} mb={4}>
+            <Typography variant="subtitle2" fontWeight={700}>
+              Gender
+            </Typography>
+            <Box
+              style={{
+                display: "flex",
+                gap: ".5rem",
+                width: "100%",
+                flexWrap: "wrap",
+              }}
             >
-              Yes
-            </FilterBtn>
+              {[...new Set(profileData.map((d) => d.gender))]?.map((item) => {
+                return (
+                  <FilterBtn variant="extended">
+                    <label htmlFor={`gender${item}`}>
+                      {item}
+                      <input
+                        type="checkbox"
+                        id={`gender${item}`}
+                        name={`${item}`}
+                        style={{ visibility: "hidden", position: "absolute" }}
+                      />
+                    </label>
+                  </FilterBtn>
+                );
+              })}
+            </Box>
+          </Stack>
 
-            <FilterBtn
-              onClick={() => setFiltersOpen(!filtersOpen)}
-              variant="extended"
+          {/* It shows the Availability filters?  */}
+          <Stack display="flex" spacing={1} mb={4}>
+            <Typography variant="subtitle2" fontWeight={700}>
+              Availability
+            </Typography>
+            <Box
+              style={{
+                display: "flex",
+                gap: ".5rem",
+                width: "100%",
+                flexWrap: "wrap",
+              }}
             >
-              No
-            </FilterBtn>
-          </Box>
-        </Stack>
+              {["Yes", "No"]?.map((item) => {
+                return (
+                  <FilterBtn variant="extended">
+                    <label htmlFor={`availability${item}`}>
+                      {item}
+                      <input
+                        type="checkbox"
+                        name={`${item}`}
+                        id={`availability${item}`}
+                        style={{ visibility: "hidden", position: "absolute" }}
+                      />
+                    </label>
+                  </FilterBtn>
+                );
+              })}
+            </Box>
+          </Stack>
 
-        {/* It shows the Domain filters?  */}
-        <Stack display="flex" spacing={1} mb={4}>
-          <Typography variant="subtitle2" fontWeight={700}>
-            Domain
-          </Typography>
-          <Box
-            style={{
-              display: "flex",
-              gap: ".5rem",
-              width: "100%",
-              flexWrap: "wrap",
-            }}
-          >
-            {uniqueDomainsArr?.map((item) => {
-              return (
-                <FilterBtn
-                  onClick={() => setFiltersOpen(!filtersOpen)}
-                  variant="extended"
-                >
-                  {item}
-                </FilterBtn>
-              );
-            })}
+          {/* It shows the Domain filters?  */}
+          <Stack display="flex" spacing={1} mb={4}>
+            <Typography variant="subtitle2" fontWeight={700}>
+              Domain
+            </Typography>
+            <Box
+              style={{
+                display: "flex",
+                gap: ".5rem",
+                width: "100%",
+                flexWrap: "wrap",
+              }}
+            >
+              {[...new Set(profileData.map((d) => d.domain))]?.map((item) => {
+                return (
+                  <FilterBtn variant="extended">
+                    <label htmlFor={`domain${item}`}>
+                      {item}
+                      <input
+                        type="checkbox"
+                        name={`${item}`}
+                        id={`domain${item}`}
+                        style={{ visibility: "hidden", position: "absolute" }}
+                      />
+                    </label>
+                  </FilterBtn>
+                );
+              })}
+            </Box>
+          </Stack>
+
+          <Divider />
+          <Box mt={2} sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              onClick={() => setFiltersOpen(false)}
+              variant="outlined"
+              sx={{ borderRadius: "25px !important" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="outlined"
+              sx={{ borderRadius: "25px !important" }}
+            >
+              Show Result
+            </Button>
           </Box>
-        </Stack>
+        </form>
       </Box>
     </>
   );
