@@ -14,6 +14,8 @@ import { styled } from '@mui/material/styles';
 import { profileData } from "../utils/userData";
 import useIsLargeView from "../utils/useIsLarge";
 import SearchFilter from "./SearchFilter";
+import { useSelector,useDispatch } from 'react-redux'
+import { setFilter } from "../ReduxSlice/StoreFilterData";
 
 const StyledPagination = styled(Pagination)(({ theme }) => ({
     '& .MuiPagination-ul': {
@@ -27,20 +29,56 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
 }));
 
 export default function Home() {
+  const StoreFilterItems=useSelector(store=>store.storefilter.storeItems)
+  const FilterItemsApplied=useSelector(store=>store.filter.FilterData)
+
+
   const [page, setPage] = useState(1);
-  const [filterData,setFilterData]=useState(profileData)
+  const dispatch = useDispatch();
+  const [filterApply,setFilterApply]=useState([])
   const [searchUser,setSearchUser]=useState("")
   const handlePageChange = (event, value) => {
     setPage(value);
   }
 
+
+  // console.log(StoreFilterItems);
+
+  useEffect(()=>{
+    setFilterApply(StoreFilterItems)
+  },[StoreFilterItems])
+  
+  useEffect(()=>{
+    const filteredData = profileData.filter(data => {
+      const { gender, domain, availability } = FilterItemsApplied;
+    
+      if (gender.length > 0 && !gender.includes(data.gender)) {
+        return false;
+      }
+    
+      if (domain.length > 0 && !domain.includes(data.domain)) {
+        return false;
+      }
+    
+      if (availability.length > 0 && !availability.includes(data.available?"Yes":"No")) {
+        return false;
+      }
+    
+      return true;
+    });
+
+    dispatch(setFilter(filteredData));
+  },[FilterItemsApplied])
+
+  
+
   const handleSerchInput=(event)=>{
     setSearchUser(event.target.value)
-    const filteredArr=profileData.filter((item)=>{
+    const filteredArr=StoreFilterItems.filter((item)=>{
       const fullName=item?.first_name +" "+ item?.last_name
       return fullName.toLowerCase().includes(event.target.value.toLowerCase())
     })
-    setFilterData(filteredArr)
+    setFilterApply(filteredArr)
   }
 
   const isLarge = useIsLargeView();
@@ -53,7 +91,7 @@ export default function Home() {
           spacing={2}
           sx={{ justifyContent: !isLarge ? "center" : "space-around", marginBottom:!isLarge?"2rem":"" }}
         >
-          {filterData.slice(page*20-20, page*20)?.map((item, index) => {
+          {filterApply.slice(page*20-20, page*20)?.map((item, index) => {
             return (
               <Grid item>
                 <Card style={{ width: !isLarge ? "328px" : "350px" }}>
@@ -152,7 +190,7 @@ export default function Home() {
           }}
           page={page}
           onChange={handlePageChange}
-          count={Math.floor(filterData.length/20)}
+          count={Math.floor(filterApply.length/20)}
           size={isLarge ? "large" : "medium"}
           variant="outlined"
           color="primary"

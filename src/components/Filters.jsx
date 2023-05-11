@@ -8,17 +8,19 @@ import {
   Checkbox,
   Button,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useIsLargeView from "../utils/useIsLarge";
 import { profileData } from "../utils/userData";
 import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch,useSelector } from 'react-redux';
+import { addFilters } from '../ReduxSlice/FilterSlice';
 
 export default function Filters({ setFiltersOpen }) {
-  const [fitersValue, setFiltersValue] = useState({
-    gender: [],
-    domain: [],
-    availability: [],
-  });
+  const CheckedItems=useSelector(store=>store.filter.CheckedFilter)
+
+  const [btnState,setBtnState]=useState({})
+
+  const dispatch=useDispatch()
 
   const FilterBtn = styled(Fab)`
     box-shadow: none;
@@ -27,11 +29,22 @@ export default function Filters({ setFiltersOpen }) {
     height: 28px;
   `;
 
+  useEffect(()=>{
+    setBtnState(CheckedItems)
+  },[CheckedItems])
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    console.log(Object.fromEntries(formData.entries()));
+    const selectedfilter=Object.fromEntries(formData.entries())
+    dispatch(addFilters({selectedfilter}))
+
   };
+
+  const handleCheckbox=(event)=>{
+    const {name,checked}=event.target
+    setBtnState({...btnState,[name]:checked})
+  } 
 
   const isLarge = useIsLargeView();
   return (
@@ -69,14 +82,16 @@ export default function Filters({ setFiltersOpen }) {
             >
               {[...new Set(profileData.map((d) => d.gender))]?.map((item) => {
                 return (
-                  <FilterBtn variant="extended">
-                    <label htmlFor={`gender${item}`}>
+                  <FilterBtn variant="extended" style={{ backgroundColor: btnState[`gender+${item}`] ? "green" : "none" }}>
+                    <label htmlFor={`gender${item}`}  style={{ color: btnState[`gender+${item}`] ? "#fff" : "black" }}>
                       {item}
                       <input
                         type="checkbox"
                         id={`gender${item}`}
-                        name={`${item}`}
-                        style={{ visibility: "hidden", position: "absolute" }}
+                        name={`gender+${item}`}
+                        style={{ visibility: "hidden", position: "absolute" }}  
+                        checked={btnState[`gender+${item}`]}
+                        onChange={handleCheckbox}
                       />
                     </label>
                   </FilterBtn>
@@ -100,14 +115,16 @@ export default function Filters({ setFiltersOpen }) {
             >
               {["Yes", "No"]?.map((item) => {
                 return (
-                  <FilterBtn variant="extended">
-                    <label htmlFor={`availability${item}`}>
+                  <FilterBtn variant="extended" style={{ backgroundColor: btnState[`availability+${item}`] ? "green" : "none" }}>
+                    <label htmlFor={`availability${item}`} style={{ color: btnState[`availability+${item}`] ? "#fff" : "black" }}>
                       {item}
                       <input
                         type="checkbox"
-                        name={`${item}`}
+                        name={`availability+${item}`}
                         id={`availability${item}`}
                         style={{ visibility: "hidden", position: "absolute" }}
+                        onChange={handleCheckbox}
+                        checked={btnState[`availability+${item}`]}
                       />
                     </label>
                   </FilterBtn>
@@ -131,14 +148,16 @@ export default function Filters({ setFiltersOpen }) {
             >
               {[...new Set(profileData.map((d) => d.domain))]?.map((item) => {
                 return (
-                  <FilterBtn variant="extended">
-                    <label htmlFor={`domain${item}`}>
+                  <FilterBtn variant="extended"   style={{ backgroundColor: btnState[`domain+${item}`] ? "green" : "none" }}>
+                    <label htmlFor={`domain${item}`}  style={{ color: btnState[`domain+${item}`] ? "#fff" : "black" }}>
                       {item}
                       <input
                         type="checkbox"
-                        name={`${item}`}
+                        name={`domain+${item}`}
                         id={`domain${item}`}
                         style={{ visibility: "hidden", position: "absolute" }}
+                        onChange={handleCheckbox}
+                        checked={btnState[`domain+${item}`]}
                       />
                     </label>
                   </FilterBtn>
