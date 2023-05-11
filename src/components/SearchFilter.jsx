@@ -1,12 +1,14 @@
-import { Stack, TextField, Box, Fab, styled } from "@mui/material";
-import React from "react";
+import { Stack, TextField, Box, Fab, styled, Drawer, SwipeableDrawer } from "@mui/material";
+import React, { useState } from "react";
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import useIsLargeView from "../utils/useIsLarge";
+import Filters from "./Filters";
 
 
 // This component taking props from the Home.jsx component 
 
 export default function SearchFilter({ handleSerchInput, searchUser }) {
+    const [filtersOpen,setFiltersOpen]=useState(false)
   const FilterBtn = styled(Fab)`
     box-shadow: none;
     background: transparent;
@@ -35,12 +37,23 @@ export default function SearchFilter({ handleSerchInput, searchUser }) {
         </Box>
 
         <Box>
-          <FilterBtn variant="extended">
+          <FilterBtn onClick={()=>setFiltersOpen(!filtersOpen)} variant="extended">
             <FilterAltOutlinedIcon/>
             Filters
           </FilterBtn>
         </Box>
       </Stack>
+
+    {
+        isLarge?
+        <Drawer anchor="right" open={filtersOpen} onClose={()=>setFiltersOpen(!filtersOpen)} >
+            <Filters/>
+        </Drawer>
+        :
+        <SwipeableDrawer anchor="bottom" open={filtersOpen} onClose={()=>setFiltersOpen(!filtersOpen)}>
+            <Filters/>
+        </SwipeableDrawer>
+    }
     </>
   );
 }
