@@ -14,6 +14,17 @@
   ![Babel](https://img.shields.io/badge/Babel-F9DC3e?style=for-the-badge&logo=babel&logoColor=black) 
   ![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 
+- A website has been developed without any local storage or database functionality.
+ 
+- The filtering feature on the website applies to every item displayed.
+
+- The search function on the website works effectively with the applied filters.
+
+- The selected card and filters are always restored for the user's convenience.
+
+- The website has been implemented using the Redux library.
+
+
 ## Getting Started
 
 First, run the development server:
@@ -35,6 +46,10 @@ yarn run build
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
+
+
+Video Demo:
+https://github.com/nandanpytech/UserDetailsTask/assets/87522041/d80216c0-834b-4673-a266-70ab2478dec9
 
 
 
