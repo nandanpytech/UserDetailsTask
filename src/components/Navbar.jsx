@@ -12,8 +12,8 @@ export default function Navbar({showCart,setShowCart}) {
             </Box>
 
             <Box>
-                <Typography sx={{color:"white"}} onClick={()=>setShowCart(!showCart)} style={{cursor:"pointer"}}>
-                    {!showCart?"Show Cart":"Back To Home"}
+                <Typography sx={{color:"white"}} onClick={()=>setShowCart(!showCart)} style={{cursor:"pointer",textDecoration:"underline"}}>
+                    {!showCart?"Show Selected Users":"Back To Home"}
                 </Typography>
             </Box>
         </Box>

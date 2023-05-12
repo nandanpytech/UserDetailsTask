@@ -228,7 +228,7 @@ export default function Home({showCart}) {
                     <Box pt={2} sx={{ display: "flex", justifyContent: "end" }}>
                       <FilterBtn
                         variant="extended"
-                        style={{background:userSelected[`${item.first_name + index}`]?"green":"none"}}
+                        style={{background:userSelected[`${item.first_name + index}`]?"green":"none",zIndex:1}}
                       >
                         <label
                           htmlFor={`${item.first_name + index}`}
@@ -267,6 +267,7 @@ export default function Home({showCart}) {
             width: "100%",
             display: "flex",
             justifyContent: "center",
+            zIndex:1000
           }}
           page={page}
           onChange={handlePageChange}

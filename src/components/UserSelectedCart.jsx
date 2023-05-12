@@ -23,8 +23,6 @@ export default function UserSelectedCart() {
   const [removeSelectedUser,setRemoveSelectedUser]=useState(alreadyClickedUser)
   const [btnState,setBtnState]=useState({checkedUser:null,selectedUser:null})
 
-  console.log(removeSelectedUser);
-
   useEffect(()=>{
     setSelectedUsers(users.selectedItems)
   },[users])
