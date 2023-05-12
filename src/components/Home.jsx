@@ -33,6 +33,8 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
 export default function Home() {
   const StoreFilterItems = useSelector((store) => store.storefilter.storeItems);
   const FiltersApplied = useSelector((store) => store.filter.FilterData);
+  // const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
+
 
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
@@ -49,6 +51,8 @@ export default function Home() {
   useEffect(() => {
     setFilterApply(StoreFilterItems);
   }, [StoreFilterItems]);
+
+
 
   // It is necessary to filter the whole data depends upon selected filters and stored the data in Redux Store
   useEffect(() => {
@@ -76,6 +80,7 @@ export default function Home() {
     dispatch(setFilter(filteredData));
   }, [FiltersApplied]);
 
+  //It is usefult to search users
   const handleSerchInput = (event) => {
     setSearchUser(event.target.value);
     const filteredArr = StoreFilterItems.filter((item) => {
@@ -93,21 +98,20 @@ export default function Home() {
     height: 28px;
   `;
 
-  // Select User Functionality
-  // const addToCart = (user) => {
-  // };
-  // console.log(userSelected);
-
+  // It handle the selected users and stored in Redux store 
   const handleCheckbox=(e,selectedUser)=>{
     const {name,checked}=e.target
     setUserSelected({...userSelected,[name]:checked})
 
     if(checked){
-      dispatch(addUser({selectedUser}))
+      console.log(userSelected);
+      dispatch(addUser({selectedUser,userSelected}))
     }else{
-      dispatch(removeUser({selectedUser}))
+      dispatch(removeUser({selectedUser,userSelected}))
     }
   }
+
+
   const isLarge = useIsLargeView();
   return (
     <>
