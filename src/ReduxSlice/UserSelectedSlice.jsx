@@ -13,6 +13,7 @@ const userSelect=createSlice({
         addUser:(state,action)=>{
             const {selectedUser,userSelected}=action.payload
             const existingUser = state.UserSelected.selectedItems.find((ele) => ele.first_name === selectedUser.first_name);
+            
             if(existingUser===undefined){
                 state.UserSelected.selectedItems.push(selectedUser)
             }

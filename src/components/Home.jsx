@@ -9,6 +9,8 @@ import {
   CardContent,
   Pagination,
   Fab,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -17,7 +19,7 @@ import useIsLargeView from "../utils/useIsLarge";
 import SearchFilter from "./SearchFilter";
 import { useSelector, useDispatch } from "react-redux";
 import { setFilter } from "../ReduxSlice/StoreFilterData";
-import { addUser,removeUser } from "../ReduxSlice/UserSelectedSlice";
+import { addUser, removeUser } from "../ReduxSlice/UserSelectedSlice";
 
 const StyledPagination = styled(Pagination)(({ theme }) => ({
   "& .MuiPagination-ul": {
@@ -30,25 +32,29 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
   },
 }));
 
-export default function Home({showCart}) {
+export default function Home({ showCart }) {
   const StoreFilterItems = useSelector((store) => store.storefilter.storeItems);
   const FiltersApplied = useSelector((store) => store.filter.FilterData);
-  const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
+  const alreadyClickedUser = useSelector(
+    (store) => store.userSelected.alreadyClickedUser
+  );
 
-  console.log(alreadyClickedUser);
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
   const [filterApply, setFilterApply] = useState([]);
   const [searchUser, setSearchUser] = useState("");
-  const [userSelected, setUserSelected]=useState({})
-  const [btnState,setBtnState]=useState({checkedUser:null,selectedUser:null})
-
+  const [userSelected, setUserSelected] = useState({});
+  const [showToast,setShowToast]=useState(false)
+  const [btnState, setBtnState] = useState({
+    checkedUser: null,
+    selectedUser: null,
+  });
 
   const handlePageChange = (event, value) => {
     setPage(value);
   };
-   //It is usefult to search users
-   const handleSerchInput = (event) => {
+  //It is usefult to search users
+  const handleSerchInput = (event) => {
     setSearchUser(event.target.value);
     const filteredArr = StoreFilterItems.filter((item) => {
       const fullName = item?.first_name + " " + item?.last_name;
@@ -56,8 +62,6 @@ export default function Home({showCart}) {
     });
     setFilterApply(filteredArr);
   };
-
-
 
   // It helps to restore the stored filtered data from Redux store...
   useEffect(() => {
@@ -90,35 +94,37 @@ export default function Home({showCart}) {
     dispatch(setFilter(filteredData));
   }, [FiltersApplied]);
 
- 
-  
+  // It handle the selected users and stored in Redux store
+  const handleCheckbox = (e, selectedUser) => {
+    if (selectedUser.available) {
+      const { name, checked } = e.target;
+      setUserSelected({ ...userSelected, [name]: checked });
+      setBtnState({
+        ...btnState,
+        checkedUser: checked,
+        selectedUser: selectedUser,
+      });
+    } else {
+      setShowToast(!showToast)
+    }
+  };
 
-  // It handle the selected users and stored in Redux store 
-  const handleCheckbox=(e,selectedUser)=>{
-    const {name,checked}=e.target
-    setUserSelected({...userSelected,[name]:checked})
-    setBtnState({...btnState,checkedUser:checked,selectedUser:selectedUser})
-  }
-  
-  useEffect(()=>{
-    if(btnState.checkedUser!=null){
-      const selectedUser=btnState.selectedUser
-      if(btnState.checkedUser){
-        dispatch(addUser({selectedUser,userSelected}))
-      }else{
-        dispatch(removeUser({selectedUser,userSelected}))
+  useEffect(() => {
+    if (btnState.checkedUser != null) {
+      const selectedUser = btnState.selectedUser;
+      if (btnState.checkedUser) {
+      dispatch(addUser({ selectedUser, userSelected }));
+      } else {
+        dispatch(removeUser({ selectedUser, userSelected }));
       }
     }
-  },[userSelected])
-  
+  }, [userSelected]);
+
   //It helps to store the restore the SelectedUser from Redux store...
-  useEffect(()=>{
-    setUserSelected(alreadyClickedUser || {})
-  },[showCart])
+  useEffect(() => {
+    setUserSelected(alreadyClickedUser || {});
+  }, [showCart]);
 
-
-
-  
   const FilterBtn = styled(Fab)`
     box-shadow: none;
     background: transparent;
@@ -228,7 +234,12 @@ export default function Home({showCart}) {
                     <Box pt={2} sx={{ display: "flex", justifyContent: "end" }}>
                       <FilterBtn
                         variant="extended"
-                        style={{background:userSelected[`${item.first_name + index}`]?"green":"none",zIndex:1}}
+                        style={{
+                          background: userSelected[`${item.first_name + index}`]
+                            ? "green"
+                            : "none",
+                          zIndex: 1,
+                        }}
                       >
                         <label
                           htmlFor={`${item.first_name + index}`}
@@ -247,7 +258,7 @@ export default function Home({showCart}) {
                               visibility: "hidden",
                               position: "absolute",
                             }}
-                            onChange={(e)=>handleCheckbox(e,item)}
+                            onChange={(e) => handleCheckbox(e, item)}
                             checked={userSelected[`${item.first_name + index}`]}
                           />
                         </label>
@@ -267,7 +278,7 @@ export default function Home({showCart}) {
             width: "100%",
             display: "flex",
             justifyContent: "center",
-            zIndex:1000
+            zIndex: 1000,
           }}
           page={page}
           onChange={handlePageChange}
@@ -276,6 +287,20 @@ export default function Home({showCart}) {
           variant="outlined"
           color="primary"
         />
+
+        {showToast && (
+          <Snackbar
+          anchorOrigin={{ vertical:"top", horizontal:"center" }}
+          open={showToast} autoHideDuration={6000} onClose={()=>setShowToast(!showToast)}>
+            <Alert
+              onClose={()=>setShowToast(!showToast)}
+              severity="warning"
+              sx={{ width: "100%" }}
+            >
+              User Not Available
+            </Alert>
+          </Snackbar>
+        )}
       </Box>
     </>
   );
