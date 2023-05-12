@@ -17,11 +17,13 @@ import { addUser,removeUser } from "../ReduxSlice/UserSelectedSlice";
 export default function UserSelectedCart() {
   const dispatch=useDispatch()
   const users = useSelector((store) => store.userSelected.UserSelected);
-//   const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
-// console.log(alreadyClickedUser);
-console.log(users.selectedItems);
+  const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
+  
   const [selectedUsers,setSelectedUsers]=useState([])
-  const [removeSelectedUser,setRemoveSelectedUser]=useState({})
+  const [removeSelectedUser,setRemoveSelectedUser]=useState(alreadyClickedUser)
+  const [btnState,setBtnState]=useState({checkedUser:null,selectedUser:null})
+
+  console.log(removeSelectedUser);
 
   useEffect(()=>{
     setSelectedUsers(users.selectedItems)
@@ -30,13 +32,21 @@ console.log(users.selectedItems);
   const handleCheckbox=(e,selectedUser)=>{
     const {name,checked}=e.target
     setRemoveSelectedUser({...removeSelectedUser,[name]:checked})
+    setBtnState({...btnState,checkedUser:checked,selectedUser:selectedUser})
+    
+  } 
 
-    if(!checked){
-      dispatch(addUser({selectedUser}))
-    }else{
-      dispatch(removeUser({selectedUser}))
+  useEffect(()=>{
+    if(btnState.checkedUser!=null){
+      const selectedUser=btnState.selectedUser
+      const userSelected=removeSelectedUser
+      if(btnState.checkedUser){
+        dispatch(addUser({selectedUser,userSelected}))
+      }else{
+        dispatch(removeUser({selectedUser,userSelected}))
+      }
     }
-  }
+  },[removeSelectedUser])
 
   const FilterBtn = styled(Fab)`
   box-shadow: none;
@@ -51,6 +61,9 @@ console.log(users.selectedItems);
   return (
     <>
       <Box>
+        {
+          selectedUsers.length>0 ?
+        
         <Grid
           container
           spacing={2}
@@ -180,6 +193,9 @@ console.log(users.selectedItems);
             );
           })}
         </Grid>
+        :
+        <Typography sx={{textAlign:"center",marginTop:"3rem"}}>No User Selected</Typography>
+        }
       </Box>
     </>
   );

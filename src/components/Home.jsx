@@ -35,27 +35,34 @@ export default function Home({showCart}) {
   const FiltersApplied = useSelector((store) => store.filter.FilterData);
   const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
 
-
+  console.log(alreadyClickedUser);
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
   const [filterApply, setFilterApply] = useState([]);
   const [searchUser, setSearchUser] = useState("");
   const [userSelected, setUserSelected]=useState({})
+  const [btnState,setBtnState]=useState({checkedUser:null,selectedUser:null})
 
 
   const handlePageChange = (event, value) => {
     setPage(value);
   };
+   //It is usefult to search users
+   const handleSerchInput = (event) => {
+    setSearchUser(event.target.value);
+    const filteredArr = StoreFilterItems.filter((item) => {
+      const fullName = item?.first_name + " " + item?.last_name;
+      return fullName.toLowerCase().includes(event.target.value.toLowerCase());
+    });
+    setFilterApply(filteredArr);
+  };
+
+
 
   // It helps to restore the stored filtered data from Redux store...
   useEffect(() => {
     setFilterApply(StoreFilterItems);
   }, [StoreFilterItems]);
-
-  //It helps to store the restore the SelectedUser from Redux store...
-  useEffect(()=>{
-    setUserSelected(alreadyClickedUser || {})
-  },[showCart])
 
   // It is necessary to filter the whole data depends upon selected filters and stored the data in Redux Store
   useEffect(() => {
@@ -83,16 +90,35 @@ export default function Home({showCart}) {
     dispatch(setFilter(filteredData));
   }, [FiltersApplied]);
 
-  //It is usefult to search users
-  const handleSerchInput = (event) => {
-    setSearchUser(event.target.value);
-    const filteredArr = StoreFilterItems.filter((item) => {
-      const fullName = item?.first_name + " " + item?.last_name;
-      return fullName.toLowerCase().includes(event.target.value.toLowerCase());
-    });
-    setFilterApply(filteredArr);
-  };
+ 
+  
 
+  // It handle the selected users and stored in Redux store 
+  const handleCheckbox=(e,selectedUser)=>{
+    const {name,checked}=e.target
+    setUserSelected({...userSelected,[name]:checked})
+    setBtnState({...btnState,checkedUser:checked,selectedUser:selectedUser})
+  }
+  
+  useEffect(()=>{
+    if(btnState.checkedUser!=null){
+      const selectedUser=btnState.selectedUser
+      if(btnState.checkedUser){
+        dispatch(addUser({selectedUser,userSelected}))
+      }else{
+        dispatch(removeUser({selectedUser,userSelected}))
+      }
+    }
+  },[userSelected])
+  
+  //It helps to store the restore the SelectedUser from Redux store...
+  useEffect(()=>{
+    setUserSelected(alreadyClickedUser || {})
+  },[showCart])
+
+
+
+  
   const FilterBtn = styled(Fab)`
     box-shadow: none;
     background: transparent;
@@ -100,20 +126,6 @@ export default function Home({showCart}) {
     font-size: 0.7rem;
     height: 28px;
   `;
-
-  // It handle the selected users and stored in Redux store 
-  const handleCheckbox=(e,selectedUser)=>{
-    const {name,checked}=e.target
-    setUserSelected({...userSelected,[name]:checked})
-
-    if(checked){
-      dispatch(addUser({selectedUser,userSelected}))
-    }else{
-      dispatch(removeUser({selectedUser,userSelected}))
-    }
-  }
-
-
   const isLarge = useIsLargeView();
   return (
     <>
