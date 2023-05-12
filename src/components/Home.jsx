@@ -30,10 +30,10 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
   },
 }));
 
-export default function Home() {
+export default function Home({showCart}) {
   const StoreFilterItems = useSelector((store) => store.storefilter.storeItems);
   const FiltersApplied = useSelector((store) => store.filter.FilterData);
-  // const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
+  const alreadyClickedUser=useSelector((store)=>store.userSelected.alreadyClickedUser)
 
 
   const [page, setPage] = useState(1);
@@ -47,12 +47,15 @@ export default function Home() {
     setPage(value);
   };
 
-  // It fetchs the stored filtered data from Redux store
+  // It helps to restore the stored filtered data from Redux store...
   useEffect(() => {
     setFilterApply(StoreFilterItems);
   }, [StoreFilterItems]);
 
-
+  //It helps to store the restore the SelectedUser from Redux store...
+  useEffect(()=>{
+    setUserSelected(alreadyClickedUser || {})
+  },[showCart])
 
   // It is necessary to filter the whole data depends upon selected filters and stored the data in Redux Store
   useEffect(() => {
@@ -104,7 +107,6 @@ export default function Home() {
     setUserSelected({...userSelected,[name]:checked})
 
     if(checked){
-      console.log(userSelected);
       dispatch(addUser({selectedUser,userSelected}))
     }else{
       dispatch(removeUser({selectedUser,userSelected}))

@@ -14,7 +14,7 @@ function App() {
         <Navbar showCart={showCart} setShowCart={setShowCart}/>
       {
         !showCart? 
-        <Home />
+        <Home showCart={showCart}/>
         :
         <UserSelectedCart/>
       }
