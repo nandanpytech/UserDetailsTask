@@ -1,4 +1,4 @@
-# TvShow
+# UserCardDetails
 
 ## Live Link : [https://user-details-task.vercel.app/](https://user-details-task.vercel.app/)
 
