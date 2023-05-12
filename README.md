@@ -48,12 +48,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 
-Video Demo:
-https://github.com/nandanpytech/UserDetailsTask/assets/87522041/d80216c0-834b-4673-a266-70ab2478dec9
+- Video Demo:
 
-
-
-
+https://github.com/nandanpytech/UserDetailsTask/assets/87522041/cd66e6fc-0e85-4efa-a9f6-d6eb8297c376
 
 
 
