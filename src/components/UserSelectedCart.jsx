@@ -157,15 +157,15 @@ export default function UserSelectedCart() {
                       <FilterBtn
                         variant="extended"
                         style={{
-                          background: removeSelectedUser[`${item.first_name + index}`]
+                          background: removeSelectedUser[`${item.first_name + item.id}`]
                             ? "red"
                             : "none",
                         }}
                       >
                         <label
-                          htmlFor={`${item.first_name + index}`}
+                          htmlFor={`${item.first_name + item.id}`}
                           style={{
-                            color: removeSelectedUser[`${item.first_name + index}`]
+                            color: removeSelectedUser[`${item.first_name + item.id}`]
                               ? "#fff"
                               : "black",
                           }}
@@ -173,14 +173,14 @@ export default function UserSelectedCart() {
                           Remove User
                           <input
                             type="checkbox"
-                            name={`${item.first_name + index}`}
-                            id={`${item.first_name + index}`}
+                            name={`${item.first_name + item.id}`}
+                            id={`${item.first_name + item.id}`}
                             style={{
                               visibility: "hidden",
                               position: "absolute",
                             }}
                             onChange={(e) => handleCheckbox(e, item)}
-                            checked={removeSelectedUser[`${item.first_name + index}`]}
+                            checked={removeSelectedUser[`${item.first_name + item.id}`]}
                           />
                         </label>
                       </FilterBtn>

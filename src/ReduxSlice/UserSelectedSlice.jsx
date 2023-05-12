@@ -37,4 +37,4 @@ const userSelect=createSlice({
 
 
 export default userSelect.reducer
-export const {addUser,removeUser,pushedIntoSlected}=userSelect.actions
+export const {addUser,removeUser}=userSelect.actions

@@ -235,16 +235,16 @@ export default function Home({ showCart }) {
                       <FilterBtn
                         variant="extended"
                         style={{
-                          background: userSelected[`${item.first_name + index}`]
+                          background: userSelected[`${item.first_name + item.id}`]
                             ? "green"
                             : "none",
                           zIndex: 1,
                         }}
                       >
                         <label
-                          htmlFor={`${item.first_name + index}`}
+                          htmlFor={`${item.first_name + item.id}`}
                           style={{
-                            color: userSelected[`${item.first_name + index}`]
+                            color: userSelected[`${item.first_name + item.id}`]
                               ? "#fff"
                               : "black",
                           }}
@@ -252,8 +252,8 @@ export default function Home({ showCart }) {
                           Select User
                           <input
                             type="checkbox"
-                            name={`${item.first_name + index}`}
-                            id={`${item.first_name + index}`}
+                            name={`${item.first_name + item.id}`}
+                            id={`${item.first_name + item.id}`}
                             style={{
                               visibility: "hidden",
                               position: "absolute",
