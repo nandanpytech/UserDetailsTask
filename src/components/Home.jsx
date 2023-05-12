@@ -8,90 +8,123 @@ import {
   Card,
   CardContent,
   Pagination,
+  Fab,
 } from "@mui/material";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 
 import { profileData } from "../utils/userData";
 import useIsLargeView from "../utils/useIsLarge";
 import SearchFilter from "./SearchFilter";
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import { setFilter } from "../ReduxSlice/StoreFilterData";
+import { addUser,removeUser } from "../ReduxSlice/UserSelectedSlice";
 
 const StyledPagination = styled(Pagination)(({ theme }) => ({
-    '& .MuiPagination-ul': {
-      background:"#e5e5e5",
-      padding:".5rem !important"
-    },
-    '& .MuiPaginationItem-root': {
-      display:"flex",
-      justifyContent:"center"
-    },
+  "& .MuiPagination-ul": {
+    background: "#e5e5e5",
+    padding: ".5rem !important",
+  },
+  "& .MuiPaginationItem-root": {
+    display: "flex",
+    justifyContent: "center",
+  },
 }));
 
 export default function Home() {
-  const StoreFilterItems=useSelector(store=>store.storefilter.storeItems)
-  const FilterItemsApplied=useSelector(store=>store.filter.FilterData)
-
+  const StoreFilterItems = useSelector((store) => store.storefilter.storeItems);
+  const FiltersApplied = useSelector((store) => store.filter.FilterData);
 
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
-  const [filterApply,setFilterApply]=useState([])
-  const [searchUser,setSearchUser]=useState("")
+  const [filterApply, setFilterApply] = useState([]);
+  const [searchUser, setSearchUser] = useState("");
+  const [userSelected, setUserSelected]=useState({})
+
+
   const handlePageChange = (event, value) => {
     setPage(value);
-  }
+  };
 
+  // It fetchs the stored filtered data from Redux store
+  useEffect(() => {
+    setFilterApply(StoreFilterItems);
+  }, [StoreFilterItems]);
 
-  // console.log(StoreFilterItems);
+  // It is necessary to filter the whole data depends upon selected filters and stored the data in Redux Store
+  useEffect(() => {
+    const filteredData = profileData.filter((data) => {
+      const { gender, domain, availability } = FiltersApplied;
 
-  useEffect(()=>{
-    setFilterApply(StoreFilterItems)
-  },[StoreFilterItems])
-  
-  useEffect(()=>{
-    const filteredData = profileData.filter(data => {
-      const { gender, domain, availability } = FilterItemsApplied;
-    
       if (gender.length > 0 && !gender.includes(data.gender)) {
         return false;
       }
-    
+
       if (domain.length > 0 && !domain.includes(data.domain)) {
         return false;
       }
-    
-      if (availability.length > 0 && !availability.includes(data.available?"Yes":"No")) {
+
+      if (
+        availability.length > 0 &&
+        !availability.includes(data.available ? "Yes" : "No")
+      ) {
         return false;
       }
-    
+
       return true;
     });
 
     dispatch(setFilter(filteredData));
-  },[FilterItemsApplied])
+  }, [FiltersApplied]);
 
-  
+  const handleSerchInput = (event) => {
+    setSearchUser(event.target.value);
+    const filteredArr = StoreFilterItems.filter((item) => {
+      const fullName = item?.first_name + " " + item?.last_name;
+      return fullName.toLowerCase().includes(event.target.value.toLowerCase());
+    });
+    setFilterApply(filteredArr);
+  };
 
-  const handleSerchInput=(event)=>{
-    setSearchUser(event.target.value)
-    const filteredArr=StoreFilterItems.filter((item)=>{
-      const fullName=item?.first_name +" "+ item?.last_name
-      return fullName.toLowerCase().includes(event.target.value.toLowerCase())
-    })
-    setFilterApply(filteredArr)
+  const FilterBtn = styled(Fab)`
+    box-shadow: none;
+    background: transparent;
+    outline: 1px solid;
+    font-size: 0.7rem;
+    height: 28px;
+  `;
+
+  // Select User Functionality
+  // const addToCart = (user) => {
+  // };
+  // console.log(userSelected);
+
+  const handleCheckbox=(e,selectedUser)=>{
+    const {name,checked}=e.target
+    setUserSelected({...userSelected,[name]:checked})
+
+    if(checked){
+      dispatch(addUser({selectedUser}))
+    }else{
+      dispatch(removeUser({selectedUser}))
+    }
   }
-
   const isLarge = useIsLargeView();
   return (
     <>
-      <SearchFilter handleSerchInput={handleSerchInput} searchUser={searchUser}/>
+      <SearchFilter
+        handleSerchInput={handleSerchInput}
+        searchUser={searchUser}
+      />
       <Box mt={4} sx={{ background: "" }}>
         <Grid
           container
           spacing={2}
-          sx={{ justifyContent: !isLarge ? "center" : "space-around", marginBottom:!isLarge?"2rem":"" }}
+          sx={{
+            justifyContent: !isLarge ? "center" : "space-around",
+            marginBottom: !isLarge ? "2rem" : "",
+          }}
         >
-          {filterApply.slice(page*20-20, page*20)?.map((item, index) => {
+          {filterApply.slice(page * 20 - 20, page * 20)?.map((item, index) => {
             return (
               <Grid item>
                 <Card style={{ width: !isLarge ? "328px" : "350px" }}>
@@ -173,6 +206,35 @@ export default function Home() {
                         </Box>
                       </Stack>
                     </Stack>
+
+                    <Box pt={2} sx={{ display: "flex", justifyContent: "end" }}>
+                      <FilterBtn
+                        variant="extended"
+                        style={{background:userSelected[`${item.first_name + index}`]?"green":"none"}}
+                      >
+                        <label
+                          htmlFor={`${item.first_name + index}`}
+                          style={{
+                            color: userSelected[`${item.first_name + index}`]
+                              ? "#fff"
+                              : "black",
+                          }}
+                        >
+                          Select User
+                          <input
+                            type="checkbox"
+                            name={`${item.first_name + index}`}
+                            id={`${item.first_name + index}`}
+                            style={{
+                              visibility: "hidden",
+                              position: "absolute",
+                            }}
+                            onChange={(e)=>handleCheckbox(e,item)}
+                            checked={userSelected[`${item.first_name + index}`]}
+                          />
+                        </label>
+                      </FilterBtn>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
@@ -190,7 +252,7 @@ export default function Home() {
           }}
           page={page}
           onChange={handlePageChange}
-          count={Math.floor(filterApply.length/20)}
+          count={Math.floor(filterApply.length / 20)}
           size={isLarge ? "large" : "medium"}
           variant="outlined"
           color="primary"
