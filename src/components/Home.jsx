@@ -19,7 +19,7 @@ import useIsLargeView from "../utils/useIsLarge";
 import SearchFilter from "./SearchFilter";
 import { useSelector, useDispatch } from "react-redux";
 import { setFilter } from "../ReduxSlice/StoreFilterData";
-import { addUser, removeUser } from "../ReduxSlice/UserSelectedSlice";
+import { addUser, removeUser,clearError } from "../ReduxSlice/UserSelectedSlice";
 
 const StyledPagination = styled(Pagination)(({ theme }) => ({
   "& .MuiPagination-ul": {
@@ -38,6 +38,10 @@ export default function Home({ showCart }) {
   const alreadyClickedUser = useSelector(
     (store) => store.userSelected.alreadyClickedUser
   );
+  const errormessage = useSelector(
+    (store) => store.userSelected.error
+  );
+  console.log(errormessage);
 
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
@@ -96,17 +100,20 @@ export default function Home({ showCart }) {
 
   // It handle the selected users and stored in Redux store
   const handleCheckbox = (e, selectedUser) => {
-    if (selectedUser.available) {
-      const { name, checked } = e.target;
-      setUserSelected({ ...userSelected, [name]: checked });
-      setBtnState({
-        ...btnState,
-        checkedUser: checked,
-        selectedUser: selectedUser,
-      });
-    } else {
-      setShowToast(!showToast)
+
+      if (selectedUser.available) {
+        const { name, checked } = e.target;
+        setUserSelected({ ...userSelected, [name]: checked });
+        setBtnState({
+          ...btnState,
+          checkedUser: checked,
+          selectedUser: selectedUser,
+        });
+      } else {
+        setShowToast(!showToast)
+  
     }
+    
   };
 
   useEffect(() => {
@@ -299,6 +306,22 @@ export default function Home({ showCart }) {
               sx={{ width: "100%" }}
             >
               User Not Available
+            </Alert>
+          </Snackbar>
+        )}
+
+        {errormessage!=null && (
+          <Snackbar
+          anchorOrigin={{ vertical:"top", horizontal:"center" }}
+          open={errormessage} autoHideDuration={6000} onClose={()=>setShowToast(!showToast)}>
+            <Alert
+              onClose={()=>{
+                dispatch(clearError())
+              }}
+              severity="warning"
+              sx={{ width: "100%" }}
+            >
+              {errormessage}
             </Alert>
           </Snackbar>
         )}

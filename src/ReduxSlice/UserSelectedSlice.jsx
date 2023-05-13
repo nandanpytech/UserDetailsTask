@@ -7,17 +7,23 @@ const userSelect=createSlice({
         UserSelected:{
            selectedItems:[]
         },
+        error:null,
         alreadyClickedUser:{}
     },
     reducers:{
         addUser:(state,action)=>{
             const {selectedUser,userSelected}=action.payload
             const existingUser = state.UserSelected.selectedItems.find((ele) => ele.first_name === selectedUser.first_name);
-            
-            if(existingUser===undefined){
-                state.UserSelected.selectedItems.push(selectedUser)
+            const uniquedomain=state.UserSelected.selectedItems.find((ele) => ele.domain === selectedUser.domain);
+            if(!uniquedomain){
+                if(existingUser===undefined){
+                    state.UserSelected.selectedItems.push(selectedUser)
+                }
+                state.alreadyClickedUser=userSelected
+            }else{
+                state.error="Unique Domain should be selected"
             }
-            state.alreadyClickedUser=userSelected
+           
 
         },
         removeUser:(state,action)=>{
@@ -27,9 +33,10 @@ const userSelect=createSlice({
             })
             state.alreadyClickedUser=userSelected
 
-
-           
-        }
+        },
+        clearError: (state) => {
+            state.error = null;
+          },
     }
 })
 
@@ -37,4 +44,4 @@ const userSelect=createSlice({
 
 
 export default userSelect.reducer
-export const {addUser,removeUser}=userSelect.actions
+export const {addUser,removeUser,clearError}=userSelect.actions
