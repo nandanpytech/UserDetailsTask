@@ -120,7 +120,7 @@ export default function Home({ showCart }) {
     }
   }, [userSelected]);
 
-  
+
   //It helps to store the restore the SelectedUser from Redux store...
   useEffect(() => {
     setUserSelected(alreadyClickedUser || {});
@@ -260,7 +260,7 @@ export default function Home({ showCart }) {
                               position: "absolute",
                             }}
                             onChange={(e) => handleCheckbox(e, item)}
-                            checked={userSelected[`${item.first_name + index}`]}
+                            checked={userSelected[`${item.first_name + item.id}`]}
                           />
                         </label>
                       </FilterBtn>
