@@ -120,6 +120,7 @@ export default function Home({ showCart }) {
     }
   }, [userSelected]);
 
+  
   //It helps to store the restore the SelectedUser from Redux store...
   useEffect(() => {
     setUserSelected(alreadyClickedUser || {});
